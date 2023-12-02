@@ -2,7 +2,7 @@
 
 ## Brief description of the main goal:
 
-The CCTest app is designed to run tests on Python CCTest stored in specific directories. It provides a user interface where users can select directories and files to run tests on. The tests are written in Python and are executed dynamically. The results of the tests are displayed in the Streamlit app.
+The CCTest app is designed to test students challenges in specific directories. It provides a user interface where users can select directories and files to run tests on. The tests are written in Python and are executed dynamically. The results of the tests are displayed in the Streamlit app.
 
 ## How to setup
 
