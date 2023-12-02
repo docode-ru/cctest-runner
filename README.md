@@ -4,6 +4,11 @@
 
 The CCTest app is designed to test students challenges in specific directories. It provides a user interface where users can select directories and files to run tests on. The tests are written in Python and are executed dynamically. The results of the tests are displayed in the Streamlit app.
 
+
+## How to run on windows
+You can just run `run.bat` file to install portable python and missing dependencies
+
+
 ## How to setup
 
 1. clone the repository:
