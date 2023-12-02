@@ -24,7 +24,7 @@ def run_test(path, exp_output=None, input=None):
 
     if error:
         return None, error
-    assert output == exp_output, "Expected '{}' but got '{}'".format(exp_output, output)
+    assert output == exp_output, "Expected '{}' but got '{}' for input: '{}'".format(exp_output, output, input)
     return output, None
 
 def run_test_data(path, test_data):

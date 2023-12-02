@@ -24,7 +24,10 @@ def get_subdirectories(dir_name):
 def get_files(dir_name, extension):
     return [f for f in os.listdir(dir_name) if f.endswith(extension)]
 
-def create_dropdown(title, options):
+def create_dropdown(title, options, default_option=None):
+    if default_option:
+        return st.selectbox(title, options, index=options.index(default_option))
+
     return st.selectbox(title, options)
 
 def create_checkbox(label, default=False):
@@ -96,7 +99,14 @@ selected_challenge = create_dropdown('Select a challenge file from the directory
 if create_checkbox('Show challenge file'):
     display_code(os.path.join(USER_CHALLENGES_DIR, selected_challenge_subdirectory, selected_challenge))
 
-selected_test_file = create_dropdown('Select a test file from the directory', test_files)
+
+selected_test_file = f'test_{selected_challenge}'
+if selected_test_file in test_files and create_checkbox('Set test file for challenge automatically'):
+    selected_test_file = create_dropdown('Select a test file from the directory', test_files, selected_test_file)
+else:
+    selected_test_file = create_dropdown('Select a test file from the directory', test_files)
+
+#selected_test_file = create_dropdown('Select a test file from the directory', test_files, )
 
 # Display code
 if create_checkbox('Show test file'):

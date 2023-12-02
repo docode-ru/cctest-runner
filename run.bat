@@ -59,9 +59,6 @@ if not exist "%PYTHON_DIR%\Scripts\pip.exe" (
 echo Install dependencies...
 
 
-:: > %CD%\%PYTHON_DIR%/python311._pth
-
-
 python -m ensurepip --user
 python -m pip install -r "%REQUIREMENTS_FILE%"
 
