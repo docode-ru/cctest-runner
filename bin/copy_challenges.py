@@ -15,6 +15,12 @@ def change_content(file_path):
                 in_function = True
             elif re.match(r'^\s*print', line): # If the line starts with 'print', it's a print statement
                 continue
+            elif re.match(r'^\s*# Output', line):     # If the line starts with '# Output'
+                continue
+            elif re.match(r'^\s*# User Input', line):     # If the line starts with '# Output'
+                continue
+            elif re.match(r'^[a-zA-Z_0-9]+\(.*\)', line):     # If the line starts with function call
+                continue
             elif in_function and line.strip() == '':  # If the line is empty, it's the end of a function
                 in_function = False
             elif not in_function:

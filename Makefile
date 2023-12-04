@@ -1,4 +1,5 @@
 
+.DEFAULT_GOAL := all
 
 .PHONY: copy_challenges
 copy_challenges:
@@ -23,6 +24,10 @@ clean:
 .PHONY: archive_challenges
 archive_challenges:
 	cd dist && zip -r challenges.zip challenges && zip -r tests.zip tests
+
+
+.PHONY: all_ru
+all_trans: copy_challenges translate_comments copy_tests archive_challenges
 
 .PHONY: all
 all: copy_challenges copy_tests archive_challenges

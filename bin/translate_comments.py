@@ -3,28 +3,34 @@ import os
 import glob
 import argparse
 from googletrans import Translator
+from httpx import Timeout
 
 def translate_text(text, src_lang='en', dest_lang='ru'):
-    translator = Translator()
+    translator = Translator(timeout=Timeout(30.0))
     translation = translator.translate(text, src=src_lang, dest=dest_lang)
     return translation.text
 
 def translate_comments_and_strings(content, src_lang='en', dest_lang='ru'):
     lines = content.split('\n')
     translated_lines = []
+    translation = []
 
     inside_comment = False
 
     for line in lines:
+        translated_lines.append(line)
         if line.strip().startswith('#'):
             inside_comment = True
-            translated_lines.append(translate_text(line.strip(), src_lang=src_lang, dest_lang=dest_lang))
+            translation.append(translate_text(line.strip(), src_lang=src_lang, dest_lang=dest_lang))
         elif inside_comment and (not line.strip() or not line.lstrip().startswith('#')):
             inside_comment = False
+            # Add the translated comment to the list of translated lines
+            translation_strings = '\n'.join(translation)
+            translated_lines.append(f"{translation_strings}")
+            translation = []
         elif inside_comment:
-            translated_lines.append(translate_text(line, src_lang=src_lang, dest_lang=dest_lang))
-        else:
-            translated_lines.append(line)
+            translation.append(translate_text(line, src_lang=src_lang, dest_lang=dest_lang))
+
 
     return '\n'.join(translated_lines)
 
