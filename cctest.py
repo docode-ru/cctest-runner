@@ -77,7 +77,11 @@ if not test_subdirs:
 
 # Create dropdown menus
 selected_challenge_subdirectory = create_dropdown(f'Select a challenges subdirectory within "{USER_CHALLENGES_DIR}"', challenge_subdirs)
-selected_subdirectory = create_dropdown(f'Select a subdirectory within "{TEST_DIR}"', test_subdirs)
+
+if create_checkbox('Select same sub directory for tests', True):
+    selected_subdirectory = selected_challenge_subdirectory
+else:
+    selected_subdirectory = create_dropdown(f'Select a subdirectory within "{TEST_DIR}"', test_subdirs)
 
 # Get files
 challenges_files = get_files(os.path.join(USER_CHALLENGES_DIR, selected_challenge_subdirectory), '.py')
