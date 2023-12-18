@@ -101,7 +101,7 @@ if create_checkbox('Show challenge file'):
 
 
 selected_test_file = f'test_{selected_challenge}'
-if selected_test_file in test_files and create_checkbox('Set test file for challenge automatically'):
+if selected_test_file in test_files and create_checkbox('Set test file for challenge automatically', True):
     selected_test_file = create_dropdown('Select a test file from the directory', test_files, selected_test_file)
 else:
     selected_test_file = create_dropdown('Select a test file from the directory', test_files)
@@ -118,20 +118,6 @@ test_module = load_module(os.path.join(TEST_DIR, selected_subdirectory, selected
 # Get test functions
 test_functions = get_test_functions(test_module)
 
-def run_code(test_functions, test_module, selected_challenge_subdirectory, selected_challenge):
-    for test_function in test_functions:
-        try:
-            test_func = getattr(test_module, test_function)
-            result, error = test_func(os.path.join(os.getcwd(), USER_CHALLENGES_DIR, selected_challenge_subdirectory, selected_challenge))
-
-            if error:
-                st.error(f'Test {selected_challenge}.py error:')
-                st.code(error)
-            else:
-                st.write(f'{test_function}(): {result}')
-        except Exception as e:
-            st.error(f'Test {test_function} failed with error: {str(e)}')
-
 
 # Run tests
 if create_button('RUN TEST'):
@@ -147,6 +133,6 @@ if create_button('RUN TEST'):
                 st.error(f'Test {selected_challenge}.py error:')
                 st.code(error)
             else:
-                st.write(f'{test_function}(): {result}')
+                st.success(f'{test_function}(): {result}')
         except Exception as e:
             st.error(f'Test {test_function} failed with error: {str(e)}')

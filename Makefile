@@ -27,7 +27,7 @@ archive_challenges:
 
 
 .PHONY: all_ru
-all_trans: copy_challenges translate_comments copy_tests archive_challenges
+all_ru: copy_challenges translate_comments copy_tests archive_challenges
 
 .PHONY: all
 all: copy_challenges copy_tests archive_challenges
