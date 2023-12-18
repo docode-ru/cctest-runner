@@ -15,7 +15,7 @@ You can just run `run.bat` file to install portable python and missing dependenc
 ```bash 
 git clone https://github.com/docode-ru/cctest.git
 ```
-2. create a virtual environment:
+2. create a virtual environment if it doesn't exist:
 ```bash
 python -m venv venv
 ```
@@ -24,7 +24,7 @@ python -m venv venv
 source venv/bin/activate
 ```
 
-4. install the requirements:
+4. install the app requirements:
 ```bash
 pip install -r requirements.txt
 ```
