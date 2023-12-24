@@ -2,6 +2,7 @@ import io
 import sys
 
 import subprocess
+from typing import Callable, Optional
 
 def to_bytearray(s):
     return bytearray(bytes(s, 'utf-8')).replace(b'\\n', b'\n')
@@ -49,11 +50,14 @@ def has_function(path, function_name):
         return function_name in f.read()
 
 # decorator that checks if a function is defined in a file and gets func name from function name
-def check_contains_function(function_name):
+def check_contains_function(function_name: Optional[str] = None) -> Callable:
     def decorator(func):
+        """Decorator to check if a specific function exists."""
+        func_name = function_name or func.__name__.replace("test_", "")
         def wrapper(*args, **kwargs):
-            if not has_function(args[0], function_name):
-                return None, f"Function '{function_name}' is not defined"
+            """Wrapper function that checks for the existence of a given function."""
+            if not has_function(args[0], func_name):
+                return None, f"Function '{func_name}' is not defined"
             return func(*args, **kwargs)
         return wrapper
     return decorator
