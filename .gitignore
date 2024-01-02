@@ -180,3 +180,7 @@ pyrightconfig.json
 # ignore project dirs
 challenges/
 tests/
+
+# ignore symlink
+challenges
+tests

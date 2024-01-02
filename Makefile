@@ -21,13 +21,27 @@ copy_tests:
 clean:
 	rm -rf dist
 
-.PHONY: archive_challenges
-archive_challenges:
-	cd dist && zip -r challenges.zip challenges && zip -r tests.zip tests
+.PHONY: archive_python_challenges
+archive_python_challenges:
+	cd dist && zip -r challenges_tests.zip challenges tests && mv challenges_tests.zip ~/Yandex.Disk.localized/python-challenges
+	echo "Archive created and copied to Yandex.Disk.localized"
 
 
 .PHONY: all_ru
-all_ru: copy_challenges translate_comments copy_tests archive_challenges
+all_ru: copy_challenges translate_comments copy_tests archive_python_challenges
 
 .PHONY: all
-all: copy_challenges copy_tests archive_challenges
+all: copy_challenges copy_tests archive_python_challenges
+
+# create symbolic links to challenges
+.PHONY: symlink_python_challenges
+symlink_python_challenges:
+	ln -s ../python-challenges/challenges
+
+# create symbolic links to tests
+.PHONY: symlink_python_tests
+symlink_python_tests:
+	ln -s ../python-challenges/tests
+
+.PHONE: symlink_python
+symlink_python: symlink_python_challenges symlink_python_tests
