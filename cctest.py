@@ -100,7 +100,7 @@ if not test_files:
 # Select files
 selected_challenge = create_dropdown('Select a challenge file from the directory', challenges_files)
 
-with st.expander('More test details'):
+with st.expander('Other test options'):
     # Display challenge code
     if create_checkbox('Show challenge file'):
         display_code(os.path.join(USER_CHALLENGES_DIR, selected_challenge_subdirectory, selected_challenge))
