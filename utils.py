@@ -16,7 +16,7 @@ def run_code(path, input=None):
     )
 
     stdout, stderr = proc.communicate(input=to_bytearray('\n'.join(input)) if input else None)
-    return stdout.decode("utf-8").strip(), stderr.decode("utf-8")
+    return "\n".join(stdout.decode("utf-8").strip().splitlines()), stderr.decode("utf-8")
 
 
 def run_test(path, exp_output=None, input=None):
