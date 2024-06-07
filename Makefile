@@ -37,11 +37,38 @@ all: copy_challenges copy_tests archive_python_challenges
 .PHONY: symlink_python_challenges
 symlink_python_challenges:
 	ln -s ../python-challenges/challenges
-
-# create symbolic links to tests
-.PHONY: symlink_python_tests
-symlink_python_tests:
 	ln -s ../python-challenges/tests
 
+
 .PHONE: symlink_python
-symlink_python: symlink_python_challenges symlink_python_tests
+symlink_python: rm_symlinks symlink_python_challenges
+
+
+# create symbolic links to js challenges
+.PHONY: symlink_js_challenges
+symlink_js_challenges:
+	ln -s ../js-challenges/challenges
+	ln -s ../js-challenges/tests
+
+
+.PHONY: symlink_js
+symlink_js: rm_symlinks symlink_js_challenges
+
+# check if there are symlinks and remove them
+.PHONE : rm_symlinks
+rm_symlinks:
+	if [ -L challenges ] || [ -L tests ]; then rm challenges; rm tests; fi
+
+
+# create symbolic links to java challenges
+.PHONY: symlink_java_challenges
+symlink_java_challenges:
+	ln -s ../java-challenges/challenges
+
+# create symbolic links to java test
+.PHONY: symlink_java_tests
+symlink_java_tests:
+	ln -s ../java-challenges/tests
+
+.PHONY: symlink_java
+symlink_java: symlink_java_challenges symlink_java_tests

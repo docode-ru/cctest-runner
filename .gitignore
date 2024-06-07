@@ -1,6 +1,15 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
+### JavaScript ###
+
+# Compiled binary addons (see build instructions)
+build/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -184,3 +193,4 @@ tests/
 # ignore symlink
 challenges
 tests
+

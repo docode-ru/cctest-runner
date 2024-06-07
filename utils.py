@@ -1,27 +1,56 @@
-import io
 import sys
+import json
 
 import subprocess
 from typing import Callable, Optional
 
+
+def get_interpreter_path(interpreter: str) -> str:
+    result = subprocess.run(['which', interpreter], capture_output=True, text=True)
+    return result.stdout.strip()
+
+
+def compile_java(java_file):
+    javac_command = ["javac", java_file]
+    proc = subprocess.Popen(javac_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = proc.communicate()
+
+    if proc.returncode != 0:
+        print(f"Error compiling {java_file}: {err.decode()}")
+        raise Exception("Compilation Error")
+
 def to_bytearray(s):
     return bytearray(bytes(s, 'utf-8')).replace(b'\\n', b'\n')
 
-def run_code(path, input=None):
+def run_code(path, input=None, interpreter='python'):
+
     proc = subprocess.Popen(
-        [sys.executable, path],
+        ' '.join([interpreter, str(path)]),
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         stdin=subprocess.PIPE,
+        shell=True
     )
 
-    stdout, stderr = proc.communicate(input=to_bytearray('\n'.join(input)) if input else None)
-    return "\n".join(stdout.decode("utf-8").strip().splitlines()), stderr.decode("utf-8")
+    input_data = to_bytearray('\n'.join(map(str, input))) if input else None
+
+    try:
+        stdout, stderr = proc.communicate(input=input_data, timeout=1)
+
+        return "\n".join(stdout.decode("utf-8").strip().splitlines()), stderr.decode("utf-8")
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        return (bytes('', 'utf-8'), bytes('Execution Timeout', 'utf-8'))
+    except Exception as e:
+        return (bytes('', 'utf-8'), bytes(str(e), 'utf-8'))
 
 
 def run_test(path, exp_output=None, input=None):
     
-    output, error = run_code(path, input=input)
+    # load interpreter from settings
+    interpreter = load_settings().get('interpreter', 'python')
+
+    output, error = run_code(path, input=input, interpreter=interpreter)
 
     if error:
         return None, error
@@ -62,3 +91,23 @@ def check_contains_function(function_name: Optional[str] = None) -> Callable:
         return wrapper
     return decorator
 
+def save_settings(settings):
+    """
+    Save the given settings to a JSON file.
+
+    :param settings: The settings to be saved.
+    :type settings: dict
+    """
+    with open('settings.json', 'w') as f:
+        json.dump(settings, f)
+
+def load_settings():
+    """
+    Load the settings from the JSON file.
+
+    :return: The loaded settings.
+    :rtype: dict
+    """
+    with open('settings.json', 'r') as f:
+        return json.load(f)
+    

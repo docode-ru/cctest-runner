@@ -21,8 +21,9 @@ def create_default_file(dir_name, file_name, content):
 def get_subdirectories(dir_name):
     return [d for d in os.listdir(dir_name) if os.path.isdir(os.path.join(dir_name, d)) and d != '__pycache__']
 
-def get_files(dir_name, extension):
-    return [f for f in os.listdir(dir_name) if f.endswith(extension)]
+def get_files(dir_name, extensions):
+    is_extension_match = lambda f: any(f.endswith(ext) for ext in extensions)
+    return [f for f in os.listdir(dir_name) if is_extension_match(f)]
 
 def create_dropdown(title, options, default_option=None):
     if default_option:
@@ -75,70 +76,88 @@ if not test_subdirs:
     create_directory(os.path.join(TEST_DIR, 'default'))
     test_subdirs = get_subdirectories(TEST_DIR)
 
-# Create dropdown menus
-selected_challenge_subdirectory = create_dropdown(f'Select a challenges subdirectory within "{USER_CHALLENGES_DIR}"', challenge_subdirs)
+challenges_tab, settings_tab = st.tabs(['Challenges', 'Settings'])
 
-if create_checkbox('Select same sub directory for tests', True):
-    selected_subdirectory = selected_challenge_subdirectory
-else:
-    selected_subdirectory = create_dropdown(f'Select a subdirectory within "{TEST_DIR}"', test_subdirs)
+with challenges_tab:
+    # Create dropdown menus
+    selected_challenge_subdirectory = create_dropdown(f'Select a challenges subdirectory within "{USER_CHALLENGES_DIR}"', challenge_subdirs)
 
-# Get files
-challenges_files = get_files(os.path.join(USER_CHALLENGES_DIR, selected_challenge_subdirectory), '.py')
-test_files = get_files(os.path.join(TEST_DIR, selected_subdirectory), '.py')
-
-# Create default files if they don't exist
-if not challenges_files:
-    create_default_file(os.path.join(USER_CHALLENGES_DIR, selected_challenge_subdirectory), 'challenge_default.py', 'a = "hello"\n\nb = "world"\n\nprint(a + b)')
-    challenges_files = get_files(os.path.join(USER_CHALLENGES_DIR, selected_challenge_subdirectory), '.py')
-
-if not test_files:
-    create_default_file(os.path.join(TEST_DIR, selected_subdirectory), 'test_default.py', 'from utils import run_test_data\n\ndef test_helloworld(path):\n    return run_test_data(path, [ (None, "Hello world") ])')
-    test_files = get_files(os.path.join(TEST_DIR, selected_subdirectory), '.py')
-
-
-# Select files
-selected_challenge = create_dropdown('Select a challenge file from the directory', challenges_files)
-
-with st.expander('Other test options'):
-    # Display challenge code
-    if create_checkbox('Show challenge file'):
-        display_code(os.path.join(USER_CHALLENGES_DIR, selected_challenge_subdirectory, selected_challenge))
-
-
-    selected_test_file = f'test_{selected_challenge}'
-    if selected_test_file in test_files and create_checkbox('Set test file for challenge automatically', True):
-        selected_test_file = create_dropdown('Select a test file from the directory', test_files, selected_test_file)
+    if create_checkbox('Select same sub directory for tests', True):
+        selected_subdirectory = selected_challenge_subdirectory
     else:
-        selected_test_file = create_dropdown('Select a test file from the directory', test_files)
+        selected_subdirectory = create_dropdown(f'Select a subdirectory within "{TEST_DIR}"', test_subdirs)
 
-    #selected_test_file = create_dropdown('Select a test file from the directory', test_files, )
+    # Get files
+    challenges_files = get_files(os.path.join(USER_CHALLENGES_DIR, selected_challenge_subdirectory), ['.py', '.js'])
+    test_files = get_files(os.path.join(TEST_DIR, selected_subdirectory), ['.py', '.js'])
 
-# Display code
-if create_checkbox('Show test file'):
-    display_code(os.path.join(TEST_DIR, selected_subdirectory, selected_test_file))
+    # Create default files if they don't exist
+    if not challenges_files:
+        create_default_file(os.path.join(USER_CHALLENGES_DIR, selected_challenge_subdirectory), 'challenge_default.py', 'a = "hello"\n\nb = "world"\n\nprint(a + b)')
+        challenges_files = get_files(os.path.join(USER_CHALLENGES_DIR, selected_challenge_subdirectory), ['.py', '.js'])
 
-# Load module
-test_module = load_module(os.path.join(TEST_DIR, selected_subdirectory, selected_test_file))
-
-# Get test functions
-test_functions = get_test_functions(test_module)
+    if not test_files:
+        create_default_file(os.path.join(TEST_DIR, selected_subdirectory), 'test_default.py', 'from utils import run_test_data\n\ndef test_helloworld(path):\n    return run_test_data(path, [ (None, "Hello world") ])')
+        test_files = get_files(os.path.join(TEST_DIR, selected_subdirectory), ['.py', '.js'])
 
 
-# Run tests
-if create_button('RUN TEST'):
-    for test_function in test_functions:
-        try:
-            test_func = getattr(test_module, test_function)
-            path_to_challenge = os.path.join(os.getcwd(), USER_CHALLENGES_DIR, selected_challenge_subdirectory, selected_challenge)
+    # Select files
+    selected_challenge = create_dropdown('Select a challenge file from the directory', challenges_files)
 
-            cleanup_inputs_in_code(path_to_challenge)
-            result, error = test_func(path_to_challenge)
+    with st.expander('Other test options'):
+        # Display challenge code
+        if create_checkbox('Show challenge file'):
+            display_code(os.path.join(USER_CHALLENGES_DIR, selected_challenge_subdirectory, selected_challenge))
 
-            if error:
-                st.error(f'Test {selected_challenge}.py error:')
-                st.code(error)
-            else:
-                st.success(f'{test_function}(): {result}')
-        except Exception as e:
-            st.error(f'Test {test_function} failed with error: {str(e)}')
+
+        selected_test_file = f'test_{selected_challenge}'
+        if selected_test_file in test_files and create_checkbox('Set test file for challenge automatically', True):
+            selected_test_file = create_dropdown('Select a test file from the directory', test_files, selected_test_file)
+        else:
+            selected_test_file = create_dropdown('Select a test file from the directory', test_files)
+
+        #selected_test_file = create_dropdown('Select a test file from the directory', test_files, )
+
+    # Display code
+    if create_checkbox('Show test file'):
+        display_code(os.path.join(TEST_DIR, selected_subdirectory, selected_test_file))
+
+    # Load module
+    test_module = load_module(os.path.join(TEST_DIR, selected_subdirectory, selected_test_file))
+
+    # Get test functions
+    test_functions = get_test_functions(test_module)
+
+
+    # Run tests
+    if create_button('RUN TEST'):
+        for test_function in test_functions:
+            try:
+                test_func = getattr(test_module, test_function)
+                path_to_challenge = os.path.join(os.getcwd(), USER_CHALLENGES_DIR, selected_challenge_subdirectory, selected_challenge)
+
+                cleanup_inputs_in_code(path_to_challenge)
+                result, error = test_func(path_to_challenge)
+
+                if error:
+                    st.error(f'Test {selected_challenge}.py error:')
+                    st.code(error)
+                else:
+                    st.success(f'{test_function}(): {result}')
+            except Exception as e:
+                st.error(f'Test {test_function} failed with error: {str(e)}')
+
+
+with settings_tab:
+    settings = {}
+    # select langage for tests
+    interpreter = create_dropdown('Select language', ['python', 'node run.js'])
+    settings['interpreter'] = interpreter
+
+    # save setting buttons
+    # Check if the "Save" button has been created
+    if create_button('Save'):
+    
+      # If the "Save" button has been created, call the function to save the settings
+        save_settings(settings)
+

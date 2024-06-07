@@ -33,3 +33,11 @@ pip install -r requirements.txt
 ```bash
 streamlit run cctest.py
 ```
+
+## How to JavaScript challenges
+
+Install `nodejs` from official website https://nodejs.org/en/download/ and run following command:
+
+```bash
+    npm install
+```
