@@ -10,6 +10,7 @@ stdin.addListener("data", function(input) {
     let code = fs.readFileSync(file, {encoding:'utf8', flag:'r'});
     let next = 0;
     code += `\nfunction prompt() { return stdInData[next++]; }`
+    code += `\nfunction input() { return stdInData[next++]; }`
     eval(code);
   }
 });
