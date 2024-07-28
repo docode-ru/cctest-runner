@@ -9,7 +9,8 @@ copy_challenges_py:
 .PHONY: copy_challenges_js
 copy_challenges_js:
 	mkdir -p dist
-	bin/copy_challenges_js.py challenges/ dist/challenges
+	bin/copy_challenges_js.py challenges/ ../js-challenges/dist/challenges
+
 
 
 
