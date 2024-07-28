@@ -1,10 +1,16 @@
 
 .DEFAULT_GOAL := all
 
-.PHONY: copy_challenges
-copy_challenges:
+.PHONY: copy_challenges_py
+copy_challenges_py:
 	mkdir -p dist
-	bin/copy_challenges.py challenges/ dist/challenges
+	bin/copy_challenges_py.py challenges/ dist/challenges
+
+.PHONY: copy_challenges_js
+copy_challenges_js:
+	mkdir -p dist
+	bin/copy_challenges_js.py challenges/ dist/challenges
+
 
 
 .PHONY: translate_comments
