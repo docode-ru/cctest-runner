@@ -8,9 +8,11 @@ copy_challenges_py:
 
 .PHONY: copy_challenges_js
 copy_challenges_js:
-	mkdir -p dist
+	rm -rf ../js-challenges/dist
+	mkdir -p ../js-challenges/dist
 	bin/copy_challenges_js.py challenges/ ../js-challenges/dist/challenges
-
+	cp -r tests/ ../js-challenges/dist/tests
+	cd ../js-challenges/dist && zip -r challenges_tests.zip challenges tests && mv challenges_tests.zip ~/Yandex.Disk-docode.ru.localized/projects/cctest/challenges-js
 
 
 
